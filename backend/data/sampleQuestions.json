@@ -1,0 +1,52 @@
+[
+  {
+    "question": "Do you have a documented cloud backup strategy with defined backup frequencies?",
+    "category": "Cloud Backup Strategy",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Are your backups automated and scheduled regularly?",
+    "category": "Backup Frequency and Automation",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Have you defined Recovery Time Objectives (RTO) for critical systems?",
+    "category": "Recovery Time Objective (RTO)",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Have you established Recovery Point Objectives (RPO) for data loss tolerance?",
+    "category": "Recovery Point Objective (RPO)",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Are your cloud backup storage locations secured with encryption?",
+    "category": "Cloud Storage Security",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Do you regularly test your disaster recovery procedures and backup restoration?",
+    "category": "Disaster Recovery Testing",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Do you have a business continuity plan that includes backup and recovery procedures?",
+    "category": "Business Continuity Planning",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Have you established backup retention policies for different data types?",
+    "category": "Backup Retention Policy",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Do you use multi-region or geo-redundant backup storage?",
+    "category": "Multi-region / Geo-redundancy",
+    "options": ["Yes", "Partially", "No"]
+  },
+  {
+    "question": "Do you validate backup integrity and maintain backup logs?",
+    "category": "Backup Validation and Logs",
+    "options": ["Yes", "Partially", "No"]
+  }
+]
