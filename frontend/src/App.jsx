@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 
 function App() {
   const [answers, setAnswers] = useState({});
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [results, setResults] = useState(null);
 
   const questions = [
     {
@@ -72,32 +74,52 @@ function App() {
       ...prev,
       [questionId]: answer
     }));
+    setError(null);
+    setResults(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-  };
+    
+    const answersArray = questions.map(q => answers[q.id] || null);
+    
+    if (answersArray.some(answer => answer === null)) {
+      setError("Please answer all questions before submitting.");
+      return;
+    }
 
-  if (submitted) {
-    return (
-      <div className="max-w-2xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">CBDR Readiness Assessment</h1>
-        <p className="text-lg">Thank you for completing the Cloud Backup and Disaster Recovery readiness assessment!</p>
-        <button 
-          onClick={() => setSubmitted(false)}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Retake Assessment
-        </button>
-      </div>
-    );
-  }
+    setLoading(true);
+    setError(null);
+    setResults(null);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/cbdr-score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answers: answersArray }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to calculate score');
+      }
+
+      const data = await response.json();
+      setResults(data);
+    } catch (err) {
+      setError(err.message || 'An error occurred while calculating the score');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">CBDR Readiness Assessment</h1>
       <p className="text-gray-600 mb-6">Evaluate your organization's Cloud Backup and Disaster Recovery readiness across key areas.</p>
+      
       <form onSubmit={handleSubmit}>
         {questions.map((q) => (
           <div key={q.id} className="mb-6 p-4 border rounded">
@@ -109,6 +131,7 @@ function App() {
                   type="radio"
                   name={`question-${q.id}`}
                   value={option}
+                  checked={answers[q.id] === option}
                   onChange={() => handleAnswerChange(q.id, option)}
                   className="mr-2"
                 />
@@ -117,13 +140,32 @@ function App() {
             ))}
           </div>
         ))}
+        
         <button 
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          disabled={loading}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Submit CBDR Assessment
+          {loading ? 'Calculating...' : 'Submit CBDR Assessment'}
         </button>
       </form>
+
+      {error && (
+        <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded">
+          <p className="text-red-800">Error: {error}</p>
+        </div>
+      )}
+
+      {results && (
+        <div className="mt-6 p-4 bg-gray-50 border rounded">
+          <h2 className="text-xl font-bold mb-4">Assessment Results</h2>
+          <div className="space-y-2">
+            <p><strong>Readiness Level:</strong> {results.readinessLevel}</p>
+            <p><strong>Total Score:</strong> {results.totalScore} / 30</p>
+            <p><strong>Percentage:</strong> {results.percentage}%</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

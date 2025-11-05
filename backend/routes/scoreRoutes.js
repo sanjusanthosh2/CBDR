@@ -1,9 +1,20 @@
 const express = require('express');
-const { calculateCBDRReadinessScore } = require('../controllers/scoreController');
+const { calculateCBDRScore } = require('../controllers/scoreController');
 
 const router = express.Router();
 
-// CBDR readiness assessment route - to be implemented
-router.post('/api/cbdr-readiness', calculateCBDRReadinessScore);
+// CBDR scoring route
+router.post('/cbdr-score', (req, res) => {
+  try {
+    calculateCBDRScore(req, res);
+  } catch (error) {
+    res.status(500).json({ 
+      error: "Route error: " + error.message 
+    });
+  }
+});
+
+// CBDR readiness assessment route
+router.post('/cbdr-readiness', calculateCBDRScore);
 
 module.exports = router;

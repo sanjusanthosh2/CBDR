@@ -5,14 +5,16 @@ const scoreRoutes = require('./routes/scoreRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Basic CORS setup
+// CORS setup
 app.use(cors());
+
+// Body parsing middleware
 app.use(express.json());
 
-// Routes
-app.use('/', scoreRoutes);
+// CBDR scoring routes
+app.use("/api", scoreRoutes);
 
-// Basic health check route
+// Health check route
 app.get('/health', (req, res) => {
   res.json({ message: 'Server is running' });
 });
